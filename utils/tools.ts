@@ -1,7 +1,7 @@
-import * as anchor from "@coral-xyz/anchor";
-import { RpcResponse } from "./types";
-import { base64 } from "@coral-xyz/anchor/dist/cjs/utils/bytes";
-import { getOrCreateAssociatedTokenAccount, transferChecked } from "@solana/spl-token";
+import * as anchor from '@coral-xyz/anchor';
+import { RpcResponse } from './types';
+import { base64 } from '@coral-xyz/anchor/dist/cjs/utils/bytes';
+import { getOrCreateAssociatedTokenAccount, transferChecked } from '@solana/spl-token';
 
 export const sleep = (s: number) => new Promise((resolve) => setTimeout(resolve, s * 1000));
 
@@ -24,33 +24,33 @@ export const getTransactionRawCode = async (rpcEndpoint: string, tx: string) => 
   try {
     // 使用直接的JSON-RPC请求获取交易（与用户提供的格式相同）
     const rpcResponse: RpcResponse = await fetch(rpcEndpoint, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        jsonrpc: "2.0",
+        jsonrpc: '2.0',
         id: 1,
-        method: "getTransaction",
+        method: 'getTransaction',
         params: [
           tx,
           {
-            encoding: "base64",
+            encoding: 'base64',
             maxSupportedTransactionVersion: 0,
-            commitment: "confirmed",
+            commitment: 'confirmed',
           },
         ],
       }),
     }).then((res) => res.json());
 
     if (!rpcResponse || !rpcResponse.result || !rpcResponse.result.transaction) {
-      console.error("交易数据获取失败或格式不正确:", JSON.stringify(rpcResponse));
+      console.error('交易数据获取失败或格式不正确:', JSON.stringify(rpcResponse));
       return null;
     }
 
     const rawTx = rpcResponse.result.transaction[0];
-    const rawCode = base64.decode(rawTx).toString("hex");
+    const rawCode = base64.decode(rawTx).toString('hex');
     return rawCode;
   } catch (error) {
-    console.error("获取交易字节码失败:", error);
+    console.error('获取交易字节码失败:', error);
     return null;
   }
 };
@@ -59,7 +59,7 @@ export const getTransactionRawCode = async (rpcEndpoint: string, tx: string) => 
 export const publicKeyToBase58 = (pubkeyHex: string): string => {
   try {
     // 将十六进制字符串转换为Buffer
-    const pubkeyBuffer = Buffer.from(pubkeyHex, "hex");
+    const pubkeyBuffer = Buffer.from(pubkeyHex, 'hex');
 
     // 使用PublicKey类进行转换
     const publicKey = new anchor.web3.PublicKey(pubkeyBuffer);
@@ -68,17 +68,17 @@ export const publicKeyToBase58 = (pubkeyHex: string): string => {
     return publicKey.toBase58();
   } catch (error) {
     console.error(`转换公钥失败: ${pubkeyHex}`, error);
-    return "无效公钥";
+    return '无效公钥';
   }
 };
 
 export const sliceRawCode = (rawCode: string | null) => {
-  console.log("--------------- sliceRawCode -----------------");
+  console.log('--------------- sliceRawCode -----------------');
   console.log(`Raw Transaction: ${rawCode}`);
-  console.log("\nDecoded Transaction:");
+  console.log('\nDecoded Transaction:');
 
   if (rawCode === null) {
-    console.error("无法解析交易：原始交易数据为空");
+    console.error('无法解析交易：原始交易数据为空');
     return null;
   }
 
@@ -108,13 +108,13 @@ export const sliceRawCode = (rawCode: string | null) => {
 
   const numReadonlySignedAccounts = parseInt(rawCode.slice(currentIndex, currentIndex + 2), 16);
   console.log(
-    `message.header.numReadonlySignedAccounts(消息头只读签名账户数量): ${numReadonlySignedAccounts} [字节长度: ${2}]`
+    `message.header.numReadonlySignedAccounts(消息头只读签名账户数量): ${numReadonlySignedAccounts} [字节长度: ${2}]`,
   );
   currentIndex += 2;
 
   const numReadonlyUnsignedAccounts = parseInt(rawCode.slice(currentIndex, currentIndex + 2), 16);
   console.log(
-    `message.header.numReadonlyUnsignedAccounts(消息头只读未签名账户数量): ${numReadonlyUnsignedAccounts} [字节长度: ${2}]`
+    `message.header.numReadonlyUnsignedAccounts(消息头只读未签名账户数量): ${numReadonlyUnsignedAccounts} [字节长度: ${2}]`,
   );
   currentIndex += 2;
 
@@ -175,7 +175,7 @@ export const sliceRawCode = (rawCode: string | null) => {
     currentIndex += dataLength * 2;
   }
 
-  console.log("--------------- sliceRawCode -----------------");
+  console.log('--------------- sliceRawCode -----------------');
   return {
     signatureLength,
     signatureList,
@@ -198,21 +198,21 @@ export const airDropToken = async (
   provider: anchor.Provider,
   mintPda: anchor.web3.PublicKey,
   to: anchor.web3.PublicKey,
-  amount: number = 1000000
+  amount: number = 1000000,
 ) => {
   // 创建关联代币账户
   const fromTokenAccount = await getOrCreateAssociatedTokenAccount(
     provider.connection,
     provider.wallet.payer,
     mintPda,
-    provider.wallet.publicKey
+    provider.wallet.publicKey,
   );
 
   const toTokenAccount = await getOrCreateAssociatedTokenAccount(
     provider.connection,
     provider.wallet.payer,
     mintPda,
-    to
+    to,
   );
 
   const tx = await transferChecked(
@@ -223,7 +223,7 @@ export const airDropToken = async (
     toTokenAccount.address,
     provider.wallet.publicKey,
     amount,
-    6
+    6,
   );
   return tx;
 };

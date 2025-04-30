@@ -1,4 +1,4 @@
-import { getTransactionRawCode, sleep, sliceRawCode } from "./tools";
+import { getTransactionRawCode, sleep, sliceRawCode } from './tools';
 
 // 交易日志
 export const explorerLog = (title: string, signature: string, rpcEndpoint: string) =>
@@ -15,7 +15,7 @@ export const tokenBalanceLog = (title: string, tokenName: string, role: string, 
 export const tableLog = (title: string, data: any) => {
   console.log(`[ 📊 Table]<${title}>`);
 
-  if (typeof data === "object" && data !== null) {
+  if (typeof data === 'object' && data !== null) {
     // 创建一个新对象以存储格式化后的数据
     const formattedData: Record<string, any> = {};
 
@@ -24,15 +24,15 @@ export const tableLog = (title: string, data: any) => {
       // 检查是否是BN (BigNumber)对象
       if (
         value &&
-        typeof value === "object" &&
+        typeof value === 'object' &&
         value.toString &&
         value.constructor &&
-        (value.constructor.name === "BN" ||
-          value.toString().includes("<BN:") ||
-          Object.prototype.toString.call(value) === "[object BN]")
+        (value.constructor.name === 'BN' ||
+          value.toString().includes('<BN:') ||
+          Object.prototype.toString.call(value) === '[object BN]')
       ) {
         // 获取BN对象的值，避免调用toString(16)
-        let hexValue = "";
+        let hexValue = '';
         let decValue = 0;
 
         // 从BN对象的字符串表示中提取值
@@ -59,7 +59,7 @@ export const tableLog = (title: string, data: any) => {
           }
         }
 
-        if (key.toLowerCase().includes("time")) {
+        if (key.toLowerCase().includes('time')) {
           // 时间戳字段，转换为时间日期
           const date = new Date(decValue * 1000).toLocaleString();
           formattedData[key] = `${hexValue} (${date})`;
@@ -67,14 +67,14 @@ export const tableLog = (title: string, data: any) => {
           // 其他数值字段
           formattedData[key] = `${hexValue} (${decValue})`;
         }
-      } else if (typeof value === "string") {
+      } else if (typeof value === 'string') {
         // 处理字符串值，尝试检测十六进制格式
         if (/^[0-9a-fA-F]+$/.test(value)) {
           // 可能是十六进制字符串
           const hexValue = value;
           const decValue = parseInt(hexValue, 16);
 
-          if (key.toLowerCase().includes("time")) {
+          if (key.toLowerCase().includes('time')) {
             // 时间戳字段
             const date = new Date(decValue * 1000).toLocaleString();
             formattedData[key] = `${hexValue} (${date})`;
@@ -90,7 +90,7 @@ export const tableLog = (title: string, data: any) => {
           if (/^[0-9a-fA-F]+$/.test(cleanValue)) {
             const decValue = parseInt(cleanValue, 16);
 
-            if (key.toLowerCase().includes("time")) {
+            if (key.toLowerCase().includes('time')) {
               const date = new Date(decValue * 1000).toLocaleString();
               formattedData[key] = `${cleanValue} (${date})`;
             } else {
@@ -103,12 +103,12 @@ export const tableLog = (title: string, data: any) => {
           // 普通字符串
           formattedData[key] = value;
         }
-      } else if (typeof value === "object" && value !== null) {
+      } else if (typeof value === 'object' && value !== null) {
         // 其它对象类型
         try {
           formattedData[key] = JSON.stringify(value);
         } catch (e) {
-          formattedData[key] = `[Object: ${value.constructor?.name || "Unknown"}]`;
+          formattedData[key] = `[Object: ${value.constructor?.name || 'Unknown'}]`;
         }
       } else {
         // 其他类型直接使用

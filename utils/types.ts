@@ -52,7 +52,7 @@ export interface RpcResponse {
       };
     };
     slot: number;
-    transaction: [string, "base64"];
+    transaction: [string, 'base64'];
     version: string;
   };
   id?: number;
